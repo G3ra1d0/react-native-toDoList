@@ -1,6 +1,8 @@
-import React from 'react';
-import {View, Text, ImageBackground, StyleSheet} from 'react-native';
+import React, {useState} from 'react';
+import {View, Text, ImageBackground, StyleSheet, FlatList} from 'react-native';
 
+// componentes
+import Taks from '../components/taks';
 // Style Padroes
 import commonStyles from '../commonStyles';
 
@@ -12,9 +14,38 @@ import 'moment/locale/pt-br';
 import todayImage from '../../assets/imgs/today.jpg';
 
 export default () => {
+  const [state, setState] = useState({
+    tasks: [
+      {
+        id: Math.random(),
+        desc: 'Compra Livro',
+        estimateAt: new Date(),
+        doneAt: new Date(),
+      },
+      {
+        id: Math.random(),
+        desc: 'Ler Livro',
+        estimateAt: new Date(),
+        doneAt: null,
+      },
+    ],
+  });
+
   const today = moment()
     .locale('pt-br')
     .format('ddd, D [de] MMMM');
+
+  const toggleTask = id => {
+    let tasks = [...state.tasks];
+  
+    tasks.forEach(element => {
+      if (element.id === id) {
+        element.doneAt = element.doneAt ? null : new Date();
+      }
+    });
+
+    setState({tasks});
+  };
 
   return (
     <View style={styles.container}>
@@ -25,7 +56,11 @@ export default () => {
         </View>
       </ImageBackground>
       <View style={styles.taksList}>
-        <Text>Taks List</Text>
+        <FlatList
+          data={state.tasks}
+          keyExtractor={item => `${item.id}`}
+          renderItem={({item}) => <Taks {...item} toggleTask={toggleTask} />}
+        />
       </View>
     </View>
   );
