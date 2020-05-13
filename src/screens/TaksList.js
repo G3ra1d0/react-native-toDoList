@@ -97,6 +97,11 @@ export default () => {
     setShowAddTaks(false);
   };
 
+  deleteTask = id => {
+    const newTasks = [...tasks].filter(e => e.id != id);
+    setTasks(newTasks);
+  };
+
   useEffect(() => {
     filterTask();
   }, [showDoneTasks, tasks]);
@@ -122,7 +127,9 @@ export default () => {
         <FlatList
           data={visibleTask}
           keyExtractor={item => `${item.id}`}
-          renderItem={({item}) => <Taks {...item} toggleTask={toggleTask} />}
+          renderItem={({item}) => (
+            <Taks {...item} toggleTask={toggleTask} onDelete={deleteTask} />
+          )}
         />
       </View>
       <TouchableOpacity
