@@ -27,7 +27,20 @@ import 'moment/locale/pt-br';
 import todayImage from '../../assets/imgs/today.jpg';
 
 export default () => {
-  const [tasks, setTasks] = useState([]);
+  const [tasks, setTasks] = useState([
+    {
+      id: Math.random(),
+      desc: 'Compra Livro',
+      estimateAt: new Date(),
+      doneAt: new Date(),
+    },
+    {
+      id: Math.random(),
+      desc: 'Ler Livro',
+      estimateAt: new Date(),
+      doneAt: null,
+    },
+  ]);
   const [showAddTaks, setShowAddTaks] = useState(false);
 
   const [showDoneTasks, setShowDoneTasks] = useState(false);
