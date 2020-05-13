@@ -10,6 +10,11 @@ import {
   Alert,
 } from 'react-native';
 
+import AsyncStorage from '@react-native-community/async-storage';
+//  Data
+import moment from 'moment';
+import 'moment/locale/pt-br';
+
 // Icons
 import Icon from 'react-native-vector-icons/FontAwesome';
 
@@ -19,28 +24,12 @@ import AddTaks from './AddTaks';
 // Style Padroes
 import commonStyles from '../commonStyles';
 
-//  Data
-import moment from 'moment';
-import 'moment/locale/pt-br';
-
 //  Imagens
 import todayImage from '../../assets/imgs/today.jpg';
 
 export default () => {
-  const [tasks, setTasks] = useState([
-    {
-      id: Math.random(),
-      desc: 'Compra Livro',
-      estimateAt: new Date(),
-      doneAt: new Date(),
-    },
-    {
-      id: Math.random(),
-      desc: 'Ler Livro',
-      estimateAt: new Date(),
-      doneAt: null,
-    },
-  ]);
+  const [mount, setMount] = useState(true);
+  const [tasks, setTasks] = useState([]);
   const [showAddTaks, setShowAddTaks] = useState(false);
 
   const [showDoneTasks, setShowDoneTasks] = useState(false);
@@ -56,7 +45,7 @@ export default () => {
     setShowDoneTasks(!showDoneTasks);
   };
 
-  const filterTask = () => {
+  const filterTask = async () => {
     let visibleTask = null;
     if (showDoneTasks) {
       visibleTask = [...tasks];
@@ -65,6 +54,13 @@ export default () => {
     }
 
     setVisibleTask(visibleTask);
+    AsyncStorage.setItem('taks', JSON.stringify([...tasks]));
+
+    const StoreTasks = await AsyncStorage.getItem('taks');
+    console.log(
+      'Veio do storage: rodando',
+      StoreTasks ? JSON.parse(StoreTasks) : 'null',
+    );
   };
 
   const toggleTask = id => {
@@ -103,6 +99,17 @@ export default () => {
   };
 
   useEffect(() => {
+    if (mount) {
+      (async () => {
+        const StoreTasks = await AsyncStorage.getItem('taks');
+        setTasks(StoreTasks ? JSON.parse(StoreTasks) : []);
+        console.log(
+          'Veio do storage: norma',
+          StoreTasks ? JSON.parse(StoreTasks) : 'null',
+        );
+      })();
+      setMount(false);
+    }
     filterTask();
   }, [showDoneTasks, tasks]);
 
