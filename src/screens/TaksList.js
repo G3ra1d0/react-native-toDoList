@@ -99,10 +99,6 @@ export default () => {
       (async () => {
         const StoreTasks = await AsyncStorage.getItem('taks');
         setTasks(StoreTasks ? JSON.parse(StoreTasks) : []);
-        console.log(
-          'Veio do storage: norma',
-          StoreTasks ? JSON.parse(StoreTasks) : 'null',
-        );
       })();
       setMount(false);
     }
