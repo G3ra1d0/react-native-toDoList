@@ -7,6 +7,7 @@ import {
   FlatList,
   TouchableOpacity,
   Platform,
+  Alert,
 } from 'react-native';
 
 // Icons
@@ -14,6 +15,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 // componentes
 import Taks from '../components/taks';
+import AddTaks from './AddTaks';
 // Style Padroes
 import commonStyles from '../commonStyles';
 
@@ -25,20 +27,8 @@ import 'moment/locale/pt-br';
 import todayImage from '../../assets/imgs/today.jpg';
 
 export default () => {
-  const [tasks, setTasks] = useState([
-    {
-      id: Math.random(),
-      desc: 'Compra Livro',
-      estimateAt: new Date(),
-      doneAt: new Date(),
-    },
-    {
-      id: Math.random(),
-      desc: 'Ler Livro',
-      estimateAt: new Date(),
-      doneAt: null,
-    },
-  ]);
+  const [tasks, setTasks] = useState([]);
+  const [showAddTaks, setShowAddTaks] = useState(false);
 
   const [showDoneTasks, setShowDoneTasks] = useState(false);
   const [visibleTask, setVisibleTask] = useState(
@@ -76,9 +66,27 @@ export default () => {
     filterTask();
   };
 
+  addTasks = newTasks => {
+    if (!newTasks.desc.trim()) {
+      Alert.alert('Dados invalido!', 'Descrição não informado!');
+      return;
+    }
+
+    const cloneTasks = [...tasks];
+    cloneTasks.push({
+      id: Math.random(),
+      desc: newTasks.desc,
+      estimateAt: newTasks.date,
+      doneAt: null,
+    });
+
+    setTasks([...cloneTasks]);
+    setShowAddTaks(false);
+  };
+
   useEffect(() => {
     filterTask();
-  }, [showDoneTasks]);
+  }, [showDoneTasks, tasks]);
 
   return (
     <View style={styles.container}>
@@ -104,6 +112,17 @@ export default () => {
           renderItem={({item}) => <Taks {...item} toggleTask={toggleTask} />}
         />
       </View>
+      <TouchableOpacity
+        style={styles.addButton}
+        onPress={() => setShowAddTaks(true)}
+        activeOpacity={0.7}>
+        <Icon name="plus" size={25} color={commonStyles.color.secondary} />
+      </TouchableOpacity>
+      <AddTaks
+        isVisible={showAddTaks}
+        onCancel={() => setShowAddTaks(false)}
+        onSave={addTasks}
+      />
     </View>
   );
 };
@@ -142,5 +161,16 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginTop: Platform.OS === 'ios' ? 40 : 10,
     justifyContent: 'flex-end',
+  },
+  addButton: {
+    position: 'absolute',
+    right: 30,
+    bottom: 30,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: commonStyles.color.today,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
