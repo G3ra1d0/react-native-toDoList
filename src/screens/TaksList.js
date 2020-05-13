@@ -57,10 +57,6 @@ export default () => {
     AsyncStorage.setItem('taks', JSON.stringify([...tasks]));
 
     const StoreTasks = await AsyncStorage.getItem('taks');
-    console.log(
-      'Veio do storage: rodando',
-      StoreTasks ? JSON.parse(StoreTasks) : 'null',
-    );
   };
 
   const toggleTask = id => {
